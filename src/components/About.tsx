@@ -1,170 +1,171 @@
-/// REPLACE FOR ABOUT PAGE
+import React from "react";
+import { Card, CardContent } from "./ui/card";
+import { Github, Linkedin, Mail } from "lucide-react";
 
-
-import React, { useState, useEffect } from "react";
-import { Character } from "../types";
-import { Star } from "lucide-react";
-import axios from "axios"; // Add this import for making HTTP requests
-
-const S3_BUCKET_URL = 'https://your-s3-bucket-url.s3.amazonaws.com/'; // Replace with your S3 bucket URL
-
-interface MarketplaceProps {
-  userAddress: string;
-  onPurchase: (character: Character) => void;
-}
-
-const Marketplace: React.FC<MarketplaceProps> = ({ userAddress, onPurchase }) => {
-  const [balance, setBalance] = useState<number>(0);
-  const [sortBy, setSortBy] = useState<"price" | "rarity">("price");
-  const [alertMessage, setAlertMessage] = useState<string | null>(null);
-  const [marketplaceItems, setMarketplaceItems] = useState<Character[]>([]);
-
-  useEffect(() => {
-    const fetchUserBalance = async () => {
-      try {
-        // Replace this with a call to your backend API to fetch the user's balance
-        const response = await axios.get(`/api/users/${userAddress}/balance`);
-        setBalance(response.data.balance);
-      } catch (error) {
-        console.error("Error fetching user balance:", error);
-      }
-    };
-    fetchUserBalance();
-  }, [userAddress]);
-
-  useEffect(() => {
-    const fetchMarketplaceItems = async () => {
-      try {
-        // Replace this with a call to your backend API to fetch marketplace items
-        const response = await axios.get('/api/marketplace/items');
-        setMarketplaceItems(response.data);
-      } catch (error) {
-        console.error("Error fetching marketplace items:", error);
-      }
-    };
-    fetchMarketplaceItems();
-  }, []);
-
-  const sortedCharacters = [...marketplaceItems].sort((a, b) => {
-    if (sortBy === "price") {
-      return Number(a.price) - Number(b.price);
-    } else {
-      return b.rarity - a.rarity;
-    }
-  });
-
-  const handlePurchase = async (character: Character) => {
-    try {
-      // Replace this with a call to your backend API to handle the purchase
-      await axios.post('/api/marketplace/purchase', { characterId: character.id, buyer: userAddress });
-
-      onPurchase(character);
-      setAlertMessage(`Successfully purchased ${character.name}!`);
-
-      // Refresh user balance
-      const balanceResponse = await axios.get(`/api/users/${userAddress}/balance`);
-      setBalance(balanceResponse.data.balance);
-
-      // Remove the purchased item from the marketplace
-      setMarketplaceItems(prevItems => prevItems.filter(item => item.id !== character.id));
-    } catch (error) {
-      console.error("Purchase failed:", error);
-      setAlertMessage("Purchase failed. Please try again.");
-    }
-
-    setTimeout(() => setAlertMessage(null), 3000);
-  };
-
-  const handleUnlist = async (character: Character) => {
-    try {
-      // Replace this with a call to your backend API to handle unlisting
-      await axios.post('/api/marketplace/unlist', { characterId: character.id, seller: userAddress });
-
-      setAlertMessage(`Successfully unlisted ${character.name}!`);
-
-      // Remove the unlisted item from the marketplace
-      setMarketplaceItems(prevItems => prevItems.filter(item => item.id !== character.id));
-    } catch (error) {
-      console.error("Unlisting failed:", error);
-      setAlertMessage("Unlisting failed. Please try again.");
-    }
-
-    setTimeout(() => setAlertMessage(null), 3000);
-  };
+const About = () => {
+  const teamMembers = [
+    {
+      name: "Rafhael Malabanan",
+      role: "Lead Developer",
+      image: "/images/profile/rafhael.jpg",
+      socials: {
+        github: "#",
+        linkedin: "https://www.linkedin.com/in/rafhael-malabanan-780305307/",
+        email: "#",
+      },
+    },
+    {
+      name: "Kenneth Iino",
+      role: "UI/UX Designer",
+      image: "/images/profile/kenneth.jpg",
+      socials: {
+        github: "#",
+        linkedin: "#",
+        email: "#",
+      },
+    },
+    {
+      name: "Veronical Mallari",
+      role: "Frontend Developer",
+      image: "/images/profile/veronica.jpg",
+      socials: {
+        github: "#",
+        linkedin: "#",
+        email: "#",
+      },
+    },
+    {
+      name: "John Brent Dizon",
+      role: "Smart Contract Developer",
+      image: "/images/profile/John.png",
+      socials: {
+        github: "#",
+        linkedin: "#",
+        email: "#",
+      },
+    },
+    {
+      name: "Leone Nucup",
+      role: "Blockchain Engineer",
+      image: "/images/profile/leone.jpg",
+      socials: {
+        github: "#",
+        linkedin: "#",
+        email: "#",
+      },
+    },
+    {
+      name: "Verniel Kent Batiller",
+      role: "Full Stack Developer",
+      image: "/images/profile/verniel.jpg",
+      socials: {
+        github: "#",
+        linkedin: "#",
+        email: "#",
+      },
+    },
+  ];
 
   return (
-    <div className="bg-gray-900 p-6 rounded-lg">
-      <h2 className="text-2xl font-bold mb-4 text-center text-yellow-400">
-        Marketplace
-      </h2>
-
-      <div className="flex justify-between items-center mb-4">
-        <div className="text-white">
-          Your Balance: <span className="text-yellow-400">{balance.toFixed(2)} Credits</span>
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 to-indigo-900 p-8">
+      {/* Hero Section */}
+      <div className="relative h-96 mb-16 rounded-xl overflow-hidden">
+        <div className="absolute inset-0 bg-black/50 z-10" />
+        <div className="absolute inset-0 z-20 flex items-center justify-center">
+          <h1 className="text-6xl font-bold text-white">ABOUT US</h1>
         </div>
-        <select
-          className="bg-purple-700 text-white p-2 rounded"
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value as "price" | "rarity")}
-        >
-          <option value="price">Sort by Price</option>
-          <option value="rarity">Sort by Rarity</option>
-        </select>
       </div>
 
-      {alertMessage && (
-        <div className="bg-blue-500 text-white p-4 rounded-md mb-4">
-          <p className="font-bold">Notice</p>
-          <p>{alertMessage}</p>
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-        {sortedCharacters.map((character) => (
-          <div key={character.id} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105 w-52 sm:w-56 md:w-60 lg:w-64">
-            <div className="relative pb-[133%]">
-              <img
-                src={`${S3_BUCKET_URL}${character.image}`}
-                alt={character.name}
-                className="absolute top-0 left-0 w-full h-full object-cover rounded-t-lg"
-              />
-            </div>
-            <div className="p-4">
-              <h3 className="text-lg font-semibold text-white truncate">
-                {character.name}
-              </h3>
-              <div className="flex items-center mt-1">
-                {Array.from({ length: character.rarity }).map((_, index) => (
-                  <Star
-                    key={index}
-                    className="inline-block w-4 h-4 text-yellow-400 mr-1"
-                  />
-                ))}
+      {/* What We Do Section */}
+      <Card className="mb-16 bg-white/10 backdrop-blur">
+        <CardContent className="grid md:grid-cols-2 gap-8 p-8">
+          <div className="relative rounded-xl overflow-hidden">
+            <img
+              src="/api/placeholder/600/400"
+              alt="Team at work"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-16 h-16 bg-white/20 backdrop-blur rounded-full flex items-center justify-center cursor-pointer hover:bg-white/30 transition-colors">
+                <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-white border-b-8 border-b-transparent ml-1" />
               </div>
-              <p className="text-lg text-yellow-400 font-bold mt-2">
-                Price: {character.price} Credits
-              </p>
-              {character.seller === userAddress ? (
-                <button
-                  onClick={() => handleUnlist(character)}
-                  className="mt-3 w-full bg-red-600 text-white text-base p-2 rounded hover:bg-red-700 transition duration-300"
-                >
-                  Unlist
-                </button>
-              ) : (
-                <button
-                  onClick={() => handlePurchase(character)}
-                  className="mt-3 w-full bg-purple-600 text-white text-base p-2 rounded hover:bg-purple-700 transition duration-300"
-                >
-                  Purchase
-                </button>
-              )}
             </div>
           </div>
-        ))}
+          <div className="space-y-6">
+            <h2 className="text-4xl font-bold text-white mb-6">WHAT WE DO</h2>
+            <p className="text-gray-200">
+              At DinoNFT Gacha, we're a team of passionate developers and
+              designers pushing the boundaries of blockchain gaming. Our
+              innovative platform combines the thrill of gacha mechanics with
+              the uniqueness of dinosaur-themed NFTs, creating an engaging
+              collecting experience powered by blockchain technology.
+            </p>
+            <p className="text-gray-200">
+              We specialize in developing secure smart contracts, creating
+              unique digital assets, and building user-friendly interfaces that
+              make NFT collecting accessible and exciting for everyone. Our team
+              brings together expertise in blockchain development, smart
+              contract security, and creative design to deliver a
+              next-generation NFT gaming platform.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Team Section */}
+      <div className="space-y-8">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-white mb-4">OUR TEAM</h2>
+          <p className="text-gray-200 max-w-2xl mx-auto">
+            Meet the talented developers and designers behind DinoNFT Gacha. Our
+            diverse team brings together expertise in blockchain technology,
+            smart contract development, and creative design to create an
+            exceptional NFT collecting experience.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {teamMembers.map((member, index) => (
+            <Card
+              key={index}
+              className="bg-white/10 backdrop-blur hover:bg-white/20 transition-colors"
+            >
+              <CardContent className="p-6 text-center">
+                <img
+                  src={member.image}
+                  alt={member.name}
+                  className="w-48 h-48 rounded-full mx-auto mb-4 object-cover"
+                />
+                <h3 className="text-xl font-bold text-white mb-2">
+                  {member.name}
+                </h3>
+                <p className="text-gray-300 mb-4">{member.role}</p>
+                <div className="flex justify-center space-x-4">
+                  <a
+                    href={member.socials.github}
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    <Github className="w-5 h-5" />
+                  </a>
+                  <a
+                    href={member.socials.linkedin}
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    <Linkedin className="w-5 h-5" />
+                  </a>
+                  <a
+                    href={member.socials.email}
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    <Mail className="w-5 h-5" />
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   );
 };
-
-export default Marketplace;
+export default About;
